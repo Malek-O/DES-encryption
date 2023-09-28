@@ -1,4 +1,5 @@
 const { Keys } = require('./key');
+const { getTheOutputFromSBoxes } = require('./s-boxes')
 
 const keys = Keys("133457799BBCDFF1")
 
@@ -25,6 +26,22 @@ const EXPANSION_TABLE = [
     '20', '21', '22', '23', '24', '25',
     '24', '25', '26', '27', '28', '29',
     '28', '29', '30', '31', '32', '1'
+];
+
+const PBox = [
+    "16", "7", "20", "21", "29", "12", "28", "17", "1", "15", "23", "26", "5", "18", "31", "10",
+    "2", "8", "24", "14", "32", "27", "3", "9", "19", "13", "30", "6", "22", "11", "4", "25"
+];
+
+const IPinverse = [
+    "40", "8", "48", "16", "56", "24", "64", "32",
+    "39", "7", "47", "15", "55", "23", "63", "31",
+    "38", "6", "46", "14", "54", "22", "62", "30",
+    "37", "5", "45", "13", "53", "21", "61", "29",
+    "36", "4", "44", "12", "52", "20", "60", "28",
+    "35", "3", "43", "11", "51", "19", "59", "27",
+    "34", "2", "42", "10", "50", "18", "58", "26",
+    "33", "1", "41", "9", "49", "17", "57", "25"
 ];
 
 
@@ -61,15 +78,54 @@ function xor(bin1, bin2) {
     return finalresult.toString()
 }
 
-const plaintext = "0123456789ABCDEF"
+function P_boxing(binPT) {
+    let Perumatedtext = "";
+    PBox.forEach(element => {
+        Perumatedtext += binPT.charAt(element - 1)
+    });
+    return Perumatedtext;
+}
+function IP_inverse(binPT) {
+    let Perumatedtext = "";
+    IPinverse.forEach(element => {
+        Perumatedtext += binPT.charAt(element - 1)
+    });
+    return Perumatedtext;
+}
 
-const binPT = hex2bin(plaintext)
-
-const PT_IP = InitialPermuation(binPT)
-
-const dividedPT = dividPlaintextIntoHalves(PT_IP, 32)
 
 
-let expandedRHS = expansion(dividedPT.RHS)
-const xoredValueWithKey = xor(expandedRHS, keys[0].key)
+function DES(pt) {
 
+    const plaintext = pt
+
+    const binPT = hex2bin(plaintext)
+
+    const PT_IP = InitialPermuation(binPT)
+
+    let dividedPT = dividPlaintextIntoHalves(PT_IP, 32)
+
+
+    for (let i = 0; i < 16; i++) {
+
+        let expandedRHS = expansion(dividedPT.RHS)
+
+        const xoredValueWithKey = xor(expandedRHS, keys[i].key)
+
+        const PtFromSBox = getTheOutputFromSBoxes(xoredValueWithKey)
+
+        const PtFromPbox = P_boxing(PtFromSBox)
+
+        const lastXoring = xor(PtFromPbox, dividedPT.LHS)
+        dividedPT = { LHS: dividedPT.RHS, RHS: lastXoring }
+        if (i == 15) {
+            console.log(dividedPT.LHS + dividedPT.RHS + "\n");
+            const cipherText = IP_inverse(dividedPT.LHS + dividedPT.RHS)
+            console.log(cipherText);
+        }
+
+    }
+}
+
+
+DES("0123456789ABCDEF")
