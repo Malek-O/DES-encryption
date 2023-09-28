@@ -42,7 +42,7 @@ function PermuatedChoice1(PC1, key) {
     });
     return Perumatedtext
 }
-function dividPlaintextIntoHalves(key, position) {
+function diviedKeyIntoHalves(key, position) {
     const firstPart = key.substring(0, position);
     const secondPart = key.substring(position);
     return { LHS: firstPart, RHS: secondPart };
@@ -83,10 +83,7 @@ function PerfromLCSonKeysFor16Rounds(key) {
     }
     return keysAfterLeftCircularShift
 }
-const key = "133457799BBCDFF1"
-const permuatedcoice1key = PermuatedChoice1(PC1, hex2bin(key))
-const dividedKey = dividPlaintextIntoHalves(permuatedcoice1key, 28)
-const keysAfterLeftCircularShift = PerfromLCSonKeysFor16Rounds(dividedKey)
+
 
 function perfromPC2(keys) {
     let Perumatedtext = "";
@@ -104,4 +101,14 @@ function perfromPC2(keys) {
     return PC2Array
 }
 
-console.log(perfromPC2(keysAfterLeftCircularShift));
+
+
+const Keys = (key) => {
+    const permuatedcoice1key = PermuatedChoice1(PC1, hex2bin(key))
+    const dividedKey = diviedKeyIntoHalves(permuatedcoice1key, 28)
+    const keysAfterLeftCircularShift = PerfromLCSonKeysFor16Rounds(dividedKey)
+    const keysAfterPC2 = perfromPC2(keysAfterLeftCircularShift)
+    return keysAfterPC2
+}
+
+module.exports = { Keys }
