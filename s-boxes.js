@@ -73,7 +73,7 @@ function getCorrespondingValue(part, box) {
     const row = parseInt(part.charAt(0) + part.charAt(part.length - 1), 2)
     const remaining = 4 - box[row][middle].toString(2).length
     const pads = "".padStart(remaining, "0")
-    return pads + box[row][middle].toString(2).padStart(2, "0")
+    return pads + box[row][middle].toString(2)
 }
 
 

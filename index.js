@@ -100,7 +100,6 @@ function DES(pt) {
     const plaintext = pt
 
     const binPT = hex2bin(plaintext)
-
     const PT_IP = InitialPermuation(binPT)
 
     let dividedPT = dividPlaintextIntoHalves(PT_IP, 32)
@@ -116,14 +115,19 @@ function DES(pt) {
 
         const PtFromPbox = P_boxing(PtFromSBox)
 
-        const lastXoring = xor(PtFromPbox, dividedPT.LHS)
-        dividedPT = { LHS: dividedPT.RHS, RHS: lastXoring }
-        if (i == 15) {
-            console.log(dividedPT.LHS + dividedPT.RHS + "\n");
-            const cipherText = IP_inverse(dividedPT.LHS + dividedPT.RHS)
-            console.log(cipherText);
-        }
 
+        const lastXoring = xor(dividedPT.LHS, PtFromPbox)
+
+        dividedPT = dividedPT.RHS + lastXoring
+        dividedPT = dividPlaintextIntoHalves(dividedPT, 32)
+
+
+        if (i == 15) {
+            const combine = dividedPT.RHS + dividedPT.LHS
+            const cipherText = IP_inverse(combine)
+
+            console.log(parseInt(cipherText, 2).toString(16));
+        }
     }
 }
 
