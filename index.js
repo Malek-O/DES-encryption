@@ -1,7 +1,6 @@
 const { Keys } = require('./key');
 const { getTheOutputFromSBoxes } = require('./s-boxes')
 
-const keys = Keys("133457799BBCDFF1")
 
 const hex2bin = (data) => data.split('').map(i =>
     parseInt(i, 16).toString(2).padStart(4, '0')).join('');
@@ -93,6 +92,19 @@ function IP_inverse(binPT) {
     return Perumatedtext;
 }
 
+function bin2hex(bits) {
+    const bitSegments = [];
+    for (let i = 0; i < bits.length; i += 4) {
+        const segment = bits.slice(i, i + 4);
+        bitSegments.push(segment);
+    }
+    let hex = ""
+    bitSegments.forEach(element => {
+        hex += parseInt(element, 2).toString(16)
+    });
+    return hex
+}
+
 
 
 function DES(pt) {
@@ -125,11 +137,14 @@ function DES(pt) {
         if (i == 15) {
             const combine = dividedPT.RHS + dividedPT.LHS
             const cipherText = IP_inverse(combine)
-
-            console.log(parseInt(cipherText, 2).toString(16));
+            return bin2hex(cipherText)
         }
     }
 }
 
 
-DES("0123456789ABCDEF")
+
+
+const keys = Keys("EEEEEEEEEEEEEEEE")
+const val = DES("FFFFFFFFFFFFFFFF")
+console.log(val);
