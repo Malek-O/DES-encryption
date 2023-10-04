@@ -107,7 +107,7 @@ function bin2hex(bits) {
 
 
 
-function DES(pt) {
+function DES(pt, keys) {
 
     const plaintext = pt
 
@@ -144,7 +144,5 @@ function DES(pt) {
 
 
 
-
-const keys = Keys("EEEEEEEEEEEEEEEE")
-const val = DES("FFFFFFFFFFFFFFFF")
+const val = DES("0123456789ABCDEF", Keys("133457799BBCDFF1"))
 console.log(val);
